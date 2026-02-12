@@ -9,7 +9,7 @@ class FlipkartMinutesScraper(BaseScraper):
     # This is a placeholder endpoint.
     SEARCH_URL = "https://1.rome.api.flipkart.com/api/4/page/fetch" 
 
-    def search(self, query: SearchQuery) -> List[Product]:
+    async def search(self, query: SearchQuery) -> List[Product]:
         if not self.headers:
             logger.warning("No headers found for Flipkart Minutes. Returning mock data.")
             return self._get_mock_data(query)
@@ -24,7 +24,7 @@ class FlipkartMinutesScraper(BaseScraper):
         }
 
         try:
-            response = self._make_request("POST", self.SEARCH_URL, json=payload)
+            response = await self._make_request("POST", self.SEARCH_URL, json=payload)
             data = response.json()
             return self.parse(data)
         except Exception as e:

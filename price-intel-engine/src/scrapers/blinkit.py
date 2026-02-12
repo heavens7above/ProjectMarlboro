@@ -9,7 +9,7 @@ class BlinkitScraper(BaseScraper):
     # Users should verify this in their Network tab.
     SEARCH_URL = "https://blinkit.com/v1/search/products" 
     
-    def search(self, query: SearchQuery) -> List[Product]:
+    async def search(self, query: SearchQuery) -> List[Product]:
         if not self.headers:
             logger.warning("No headers found for Blinkit. Returning mock data.")
             return self._get_mock_data(query)
@@ -24,7 +24,7 @@ class BlinkitScraper(BaseScraper):
         try:
             # Note: Blinkit often uses query params or a POST body. 
             # This is a best-guess structure based on common patterns.
-            response = self._make_request("GET", self.SEARCH_URL, params=params)
+            response = await self._make_request("GET", self.SEARCH_URL, params=params)
             data = response.json()
             return self.parse(data)
         except Exception as e:

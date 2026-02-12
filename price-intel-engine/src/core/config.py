@@ -30,13 +30,13 @@ class Settings(BaseSettings):
             return {}
         try:
             with open(self.HEADERS_FILE, "r") as f:
-                return json.load(f)
+                return json.load(f) # type: ignore
         except Exception:
             return {}
 
     def get_platform_headers(self, platform: str) -> Dict[str, str]:
         all_headers = self.load_headers()
-        return all_headers.get(platform, {})
+        return all_headers.get(platform, {}) # type: ignore
 
 # Singleton instance
 settings = Settings()

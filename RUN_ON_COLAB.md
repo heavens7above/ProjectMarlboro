@@ -1,67 +1,81 @@
 # 🚀 Run Price Intelligence Engine on Google Colab
 
-This guide will help you run the scraping engine directly in Google Colab.
+Follow these exact steps to run the engine in a Google Colab notebook.
 
-## Option A: Quick Upload (Easiest)
+### 1️⃣ Step 1: Install Dependencies
 
-1.  **Download Code**: Zip your local `price-intel-engine` folder.
-2.  **Open Colab**: Go to [colab.research.google.com](https://colab.research.google.com).
-3.  **Upload**: Click the "Files" icon (folder) on the left sidebar -> Upload -> Select your zip file.
-4.  **Unzip**: Run this in a code cell:
-    ```python
-    !unzip price-intel-engine.zip
-    %cd price-intel-engine
-    ```
-5.  **Install**:
-    ```python
-    !pip install -r requirements.txt
-    ```
-6.  **Configure**:
-    - Right-click `config/headers.json` in the sidebar and edit it to add your real Blinkit/Zepto headers.
-    - (Optional) Upload `credentials.json` to the `config/` folder for Google Sheets.
-7.  **Run**:
-    ```python
-    !python src/main.py --term "Amul Butter"
-    ```
+Copy and paste this into the **first code cell** and run it.
 
-## Option B: Git Clone (Best for Updates)
+```python
+# Clone the repository (if you haven't already uploaded it)
+!git clone https://github.com/heavens7above/ProjectMarlboro.git
+%cd ProjectMarlboro/price-intel-engine
 
-1.  **Push Code**: Push your code to a public/private GitHub repo.
-2.  **Clone in Colab**:
-    ```python
-    !git clone https://github.com/YOUR_USERNAME/price-intel-engine.git
-    %cd price-intel-engine
-    ```
-3.  **Install**:
-    ```python
-    !pip install -r requirements.txt
-    ```
-4.  **Setup Config**:
-    Since `config/` files are gitignored, you must create them.
+# Install required libraries
+!pip install -r requirements.txt
+!pip install --upgrade curl_cffi tenacity loguru gspread oauth2client pydantic-settings
+```
 
-    ```python
-    import json
+### 2️⃣ Step 2: Setup Configuration (Crucial!)
 
-    # PASTE YOUR REAL HEADERS HERE
-    headers = {
-        "blinkit": {"auth_token": "...", "location_id": "..."},
-        "zepto": {"app_version": "...", "platform": "web"}
+Copy and paste this into the **second code cell**.
+**Replace headers with real values for best results**.
+
+```python
+import json
+import os
+
+# Create config directory
+os.makedirs("config", exist_ok=True)
+
+# ---------------------------------------------------------
+# PASTE YOUR REAL HEADERS BELOW
+# ---------------------------------------------------------
+headers_config = {
+    "blinkit": {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15",
+        "auth_token": "YOUR_REAL_BLINKIT_AUTH_TOKEN",
+        "location_id": "YOUR_REAL_LOCATION_ID"
+    },
+    "zepto": {
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Mobile/15E148 Safari/604.1",
+        "app_version": "YOUR_ZEPTO_APP_VERSION",
+        "auth_token": "YOUR_ZEPTO_AUTH_TOKEN"
+    },
+    "flipkart_minutes": {
+         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
     }
+}
 
-    with open("config/headers.json", "w") as f:
-        json.dump(headers, f)
-    ```
+# Write headers.json
+with open("config/headers.json", "w") as f:
+    json.dump(headers_config, f, indent=4)
 
-5.  **Run**:
-    ```python
-    !python src/main.py --term "Coke"
-    ```
+print("✅ Configuration set up! Don't forget to replace placeholders!")
+```
 
-## ⚠️ Notes for Colab Users
+### 3️⃣ Step 3: Run the Engine 🏎️
 
-- **IP Rotation**: Colab IPs are datacenter IPs (Google). You might get flagged faster than on residential wifi.
-- **Persistent Storage**: Files are deleted when the runtime disconnects. Use Google Drive mounting if you need to save data permanently not using GSheets.
-  ```python
-  from google.colab import drive
-  drive.mount('/content/drive')
-  ```
+Copy and paste this into the **third code cell**.
+
+```python
+import sys
+import os
+
+# Create a dummy credentials file to bypass GSheet error if you don't use it
+if not os.path.exists("config/credentials.json"):
+    with open("config/credentials.json", "w") as f:
+        f.write("{}")
+
+# Set PYTHONPATH so python can find the 'src' module
+os.environ['PYTHONPATH'] = os.getcwd()
+
+# Run the Scraper for "Marlboro Red"
+# --dry-run : Skips attempting to upload to Google Sheets
+!python src/main.py --term "Marlboro Red" --dry-run
+```
+
+### 4️⃣ Troubleshooting
+
+- **"Request failed" / 401 Unauthorized**: Your headers in Step 2 are wrong or expired.
+- **ModuleNotFoundError**: Make sure you ran `%cd ProjectMarlboro/price-intel-engine` in Step 1.

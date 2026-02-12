@@ -2,7 +2,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from src.core.models import Product
 from src.core.config import settings
-from typing import List
+from typing import List, Optional
 from loguru import logger
 import os
 
@@ -17,7 +17,7 @@ class GSheetExporter:
         self.client = self._authenticate()
         self.sheet = None
 
-    def _authenticate(self):
+    def _authenticate(self) -> Optional[gspread.Client]:
         try:
             # Check for credentials file first
             if settings.CREDS_FILE.exists():
@@ -27,7 +27,7 @@ class GSheetExporter:
             # Fallback to environment variable (good for CI/CD/Lambda)
             elif os.getenv("GOOGLE_CREDS_JSON"):
                 import json
-                creds_dict = json.loads(os.getenv("GOOGLE_CREDS_JSON"))
+                creds_dict = json.loads(os.getenv("GOOGLE_CREDS_JSON", "{}"))
                 creds = ServiceAccountCredentials.from_json_keyfile_dict(
                     creds_dict, self.SCOPE
                 )
@@ -40,7 +40,7 @@ class GSheetExporter:
             logger.error(f"Google Sheets authentication failed: {e}")
             return None
 
-    def export(self, products: List[Product]):
+    def export(self, products: List[Product]) -> None:
         if not self.client:
             logger.warning("Skipping Google Sheets export due to missing credentials.")
             return

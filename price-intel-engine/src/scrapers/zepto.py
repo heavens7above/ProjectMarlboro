@@ -8,7 +8,7 @@ class ZeptoScraper(BaseScraper):
     # Zepto often uses a different API structure, sometimes GraphQL or strictly mobile APIs.
     SEARCH_URL = "https://api.zeptonow.com/api/v1/search"
 
-    def search(self, query: SearchQuery) -> List[Product]:
+    async def search(self, query: SearchQuery) -> List[Product]:
         if not self.headers:
             logger.warning("No headers found for Zepto. Returning mock data.")
             return self._get_mock_data(query)
@@ -21,7 +21,7 @@ class ZeptoScraper(BaseScraper):
 
         try:
             # Zepto usually requires specific headers like 'app-version', 'platform', etc.
-            response = self._make_request("POST", self.SEARCH_URL, json=payload)
+            response = await self._make_request("POST", self.SEARCH_URL, json=payload)
             data = response.json()
             return self.parse(data)
         except Exception as e:

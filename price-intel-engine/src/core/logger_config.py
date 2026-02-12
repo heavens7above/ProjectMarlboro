@@ -9,7 +9,7 @@ LOG_DIR.mkdir(exist_ok=True)
 LOG_FILE = LOG_DIR / "app.log"
 ERROR_LOG_FILE = LOG_DIR / "error.log"
 
-def configure_logger():
+def configure_logger() -> None:
     """
     Configures the logger with rotation, retention, and formatting.
     """
