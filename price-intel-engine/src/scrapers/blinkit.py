@@ -7,7 +7,7 @@ from datetime import datetime
 class BlinkitScraper(BaseScraper):
     # This is a likely endpoint, but it might change.
     # Users should verify this in their Network tab.
-    SEARCH_URL = "https://blinkit.com/v1/search/products" 
+    SEARCH_URL = "https://blinkit.com/v1/layout/search" 
     
     async def search(self, query: SearchQuery) -> List[Product]:
         if not self.headers:
