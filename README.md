@@ -1,5 +1,7 @@
 # Price Intelligence Engine 🛒📊
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1cKtREWWbUqYDuB3x8PVoXHkF38l8k7Sq?usp=sharing)
+
 A sophisticated, modular scraping engine for Quick Commerce platforms (Blinkit, Zepto, Flipkart Minutes). Built for reliability, stealth, and actionable data extraction.
 
 ## 🚀 Features
