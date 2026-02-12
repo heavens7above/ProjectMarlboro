@@ -10,8 +10,8 @@ class FlipkartMinutesScraper(BaseScraper):
     SEARCH_URL = "https://1.rome.api.flipkart.com/api/4/page/fetch" 
 
     async def search(self, query: SearchQuery) -> List[Product]:
-        if not self.headers:
-            logger.warning("No headers found for Flipkart Minutes. Returning mock data.")
+        if not self.headers or "cookie" not in self.headers:
+            logger.warning("No 'cookie' found in headers for Flipkart Minutes. Returning mock data.")
             return self._get_mock_data(query)
 
         # Flipkart often uses a complex POST payload with 'pageUri', 'locationContext', etc.

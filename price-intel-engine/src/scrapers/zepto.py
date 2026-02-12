@@ -6,7 +6,7 @@ from datetime import datetime
 
 class ZeptoScraper(BaseScraper):
     # Zepto often uses a different API structure, sometimes GraphQL or strictly mobile APIs.
-    SEARCH_URL = "https://api.zeptonow.com/api/v1/search"
+    SEARCH_URL = "https://api.zepto.co.in/api/v1/search" # Try .co.in
 
     async def search(self, query: SearchQuery) -> List[Product]:
         if not self.headers:
