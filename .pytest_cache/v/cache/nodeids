@@ -1,0 +1,8 @@
+[
+  "price-intel-engine/tests/integration/test_pipeline.py::test_pipeline_dry_run",
+  "price-intel-engine/tests/unit/test_models.py::test_product_model_creation",
+  "price-intel-engine/tests/unit/test_models.py::test_search_query_creation",
+  "price-intel-engine/tests/unit/test_normalizer.py::test_compare_products_all_unavailable",
+  "price-intel-engine/tests/unit/test_normalizer.py::test_compare_products_empty",
+  "price-intel-engine/tests/unit/test_normalizer.py::test_compare_products_logic"
+]
