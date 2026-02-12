@@ -1,5 +1,7 @@
 # 🚀 Run Price Intelligence Engine on Google Colab
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1cKtREWWbUqYDuB3x8PVoXHkF38l8k7Sq?usp=sharing)
+
 Follow these exact steps to run the engine in a Google Colab notebook.
 
 ### 1️⃣ Step 1: Install Dependencies
