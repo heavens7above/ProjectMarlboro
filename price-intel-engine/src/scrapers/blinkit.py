@@ -18,7 +18,10 @@ class BlinkitScraper(BaseScraper):
             "q": query.term,
             "start": 0,
             "size": 20,
-            "location_id": self.headers.get("location_id", "") # Custom header often needed
+            # Use 'lat' & 'lon' if provided in headers (often easier to find), else use 'location_id'
+            "lat": self.headers.get("lat", ""), 
+            "lon": self.headers.get("lon", ""),
+            "location_id": self.headers.get("location_id", "") 
         }
 
         try:
@@ -36,23 +39,35 @@ class BlinkitScraper(BaseScraper):
 
     def parse(self, response: Dict) -> List[Product]:
         products = []
-        # This parsing logic depends 100% on the response structure.
-        # We will need to adjust this once we have real JSON.
-        # For now, this is a schematic parser.
         try:
-            items = response.get("products", [])
-            for item in items:
-                product = Product(
-                    platform="blinkit",
-                    name=item.get("name", "Unknown"),
-                    price=float(item.get("price", 0)),
-                    mrp=float(item.get("mrp", 0)),
-                    availability=item.get("inventory", {}).get("available", False),
-                    image_url=item.get("image_url"),
-                    weight=item.get("weight"),
-                    timestamp=datetime.now()
-                )
-                products.append(product)
+            # Blinkit response often wraps data in 'response' -> 'snippets'
+            # We look for widgets that contain 'cart_item' data
+            root = response.get("response", {})
+            snippets = root.get("snippets", [])
+            
+            for snippet in snippets:
+                try:
+                    data = snippet.get("data", {})
+                    
+                    # Look for the cart_item which has the clean data
+                    atc_action = data.get("atc_action", {})
+                    cart_item = atc_action.get("add_to_cart", {}).get("cart_item")
+                    
+                    if cart_item:
+                        product = Product(
+                            platform="blinkit",
+                            name=cart_item.get("product_name", "Unknown"),
+                            price=float(cart_item.get("price", 0)),
+                            mrp=float(cart_item.get("mrp", 0)),
+                            availability=bool(cart_item.get("inventory", 0) > 0),
+                            image_url=cart_item.get("image_url"),
+                            weight=cart_item.get("unit"),
+                            timestamp=datetime.now()
+                        )
+                        products.append(product)
+                except Exception:
+                    continue
+                    
         except Exception as e:
             logger.error(f"Error parsing Blinkit response: {e}")
         
