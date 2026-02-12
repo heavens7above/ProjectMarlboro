@@ -28,7 +28,10 @@ class BlinkitScraper(BaseScraper):
             data = response.json()
             return self.parse(data)
         except Exception as e:
-            logger.error(f"Blinkit search failed: {e}")
+            if "404" in str(e):
+                logger.error(f"Blinkit 404 Error: The API Endpoint '{self.SEARCH_URL}' is likely invalid. Please check your browser's Network Tab for the correct 'search' URL and update src/scrapers/blinkit.py.")
+            else:
+                logger.error(f"Blinkit search failed: {e}")
             return []
 
     def parse(self, response: Dict) -> List[Product]:

@@ -6,7 +6,7 @@ from datetime import datetime
 
 class ZeptoScraper(BaseScraper):
     # Zepto often uses a different API structure, sometimes GraphQL or strictly mobile APIs.
-    SEARCH_URL = "https://api.zepto.co.in/api/v1/search" # Try .co.in
+    SEARCH_URL = "https://api.zepto.co.in/api/v1/user/search" # Updated candidate
 
     async def search(self, query: SearchQuery) -> List[Product]:
         if not self.headers:
@@ -25,7 +25,10 @@ class ZeptoScraper(BaseScraper):
             data = response.json()
             return self.parse(data)
         except Exception as e:
-            logger.error(f"Zepto search failed: {e}")
+            if "404" in str(e):
+                logger.error(f"Zepto 404 Error: The API Endpoint '{self.SEARCH_URL}' is likely invalid. Please check your browser's Network Tab for the correct 'search' URL and update src/scrapers/zepto.py.")
+            else:
+                logger.error(f"Zepto search failed: {e}")
             return []
 
     def parse(self, response: Dict) -> List[Product]:
